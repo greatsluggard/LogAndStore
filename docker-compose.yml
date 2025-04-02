@@ -1,0 +1,36 @@
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: LogAndStore.API/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__PostgreSQL=Host=db;Port=5432;Database=logandstore_db;Username=postgres;Password=postgres
+    networks:
+      - logandstore_net
+
+  db:
+    image: postgres:15
+    container_name: logandstore_db
+    restart: always
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: logandstore_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    networks:
+      - logandstore_net
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+networks:
+  logandstore_net:
+
+volumes:
+  postgres_data:
